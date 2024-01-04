@@ -1,0 +1,12 @@
+minimal DRINKS = ( brown -> intern1  ->  intern2 -> chocolate ->DRINKS
+        		| red   ->              intern2 -> coffee    ->DRINKS
+         		| green -> intern1              -> tea       ->DRINKS)
+	   \ { intern1, intern2 } .
+
+
+// The probability of performing action coffee is unlimited as it is not 
+//specified how many times are other actions choosen. if the chosings are equal it will be divided to 3 and it will be 1/3
+//but if the probability is not specified it will be unlimited("we dont care" like the spirit of the module :D)
+
+//the time taken for producing tea once the green button has been pressed is
+// equals to time spent for process intern1. 
