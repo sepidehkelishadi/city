@@ -1,0 +1,29 @@
+//Actions of Interest
+set Actions = {arrive, water, depart}
+
+//Processes: CLAN ans RIVER
+
+const True = 1
+const False = 0
+range B = False..True //Flags are considered Booleans. If raised=True and if lowers=False.
+
+CLAN = (arrive -> water -> depart -> CLAN).
+
+||CLANS = (hatfields:CLAN || macCoys:CLAN).
+
+||NoConflictRiver = (CLANS || RIVER || SAFETY).
+
+RIVER = RIVER[False][False],  //initially no clans are at the river so no flags are raised
+RIVER[ht:B][mt:B] =           //ht is hatfield turn to go to river, mt is macCoys turn
+(when(!mt && !ht) hatfields.arrive -> hatfields.water -> RIVER[True][False]   //if no clans is at the river hatfield can go
+|when(ht && !mt) hatfields.depart ->RIVER[False][False]
+|when(!ht && !mt) macCoys.arrive -> macCoys.water -> RIVER[False][True]      //if no clans is at the river macCoys can go
+|when(mt && !ht) macCoys.depart ->RIVER[False][False]
+).
+
+//In this senario carnage ensus when both Clans arrive at the River at the same time(so no seperate state for it is considered).
+property SAFETY = (hatfields.arrive -> hatfields.water -> hatfields.depart-> SAFETY
+				| macCoys.arrive -> macCoy.sswater -> macCoys.sdepart -> SAFETY
+					),
+HATFIELD[op1:B] = (when(op1) hatfields.depart -> HATFIELD[False]),
+MACCOYS[op2:B] = (when(op2) macCoys.depart -> MACCOYS[False]).
