@@ -1,0 +1,30 @@
+const True = 1
+const False = 0
+range B = False..True
+range T = 1...2
+
+CLAN = (arrive -> water -> depart -> CLAN).
+
+||CLANS = (hatfield:CLAN || macCoy:CLAN).
+
+||NoConflictRiver = (CLANS || RIVER || ONEWAY).
+
+RIVER = RIVER[False][False][1],  //initially no clans are at the river
+RIVER[ht:B][mt:B][n:T] =           //ht is hatfield turn to go to river, mt is macCoys turn
+(when(!mt && !ht && n == 1) hatfield.arrive -> hatfield.water -> RIVER[True][False][2]
+|when(ht && !mt) hatfield.depart ->RIVER[False][False]
+|when(!ht && !mt && n == 2) macCoy.arrive -> macCoy.water -> RIVER[False][True][1]
+|when(mt && !ht) macCoy.depart ->RIVER[False][False]
+).
+
+property ONEWAY = (hatfield.arrive -> hatfield.water -> hatfield.depart-> ONEWAY
+				| macCoy.arrive -> macCoy.water -> macCoy.depart -> ONEWAY
+					),
+HATFIELD[op1:B] = (when(op1) hatfield.depart -> HATFIELD[False]),
+MACCOYS[op2:B] = (when(op2) macCoy.depart -> MACCOYS[False]).
+
+progress HATFIELD_WATER = {hatfield.arrive}
+progress MACCOY_WATER = {macCoy.arrive}
+
+||CongestedBridge = (NoConflictRiver)
+					>> {hatfield.depart, macCoy.depart}.
