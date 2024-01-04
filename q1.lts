@@ -1,0 +1,21 @@
+NS = Q0_NS,
+    Q0_NS = (n -> Q1_NS),
+    Q1_NS = (s -> Q1_NS),
+    Q3_NS = (s -> Q1_NS),
+    Q4_NS = (s -> Q1_NS).
+
+
+WE = Q0_WE,
+    Q0_WE = (ne -> Q1_WE),
+    Q1_WE = (se -> Q2_WE),
+    Q2_WE = (e -> Q3_WE),
+    Q3_WE = (e -> Q5_WE ),
+    Q5_WE = (ne -> Q6_WE),
+    Q6_WE = (nw -> Q7_WE),
+    Q7_WE = (nw -> Q8_WE),
+    Q8_WE = (sw -> Q9_WE),
+    Q9_WE = (e -> Q3_WE),
+    Q10_WE = (e -> Q5_WE).
+
+||S = (NS || WE) .
+
