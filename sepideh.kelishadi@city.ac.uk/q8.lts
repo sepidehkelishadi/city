@@ -1,0 +1,11 @@
+NS = (n -> ne -> se -> Q1),
+Q1=(s -> ne -> nw -> nw -> sw -> Q1).
+
+WE = (ne -> se -> Q2),
+Q2=(e -> e -> ne -> nw -> nw -> sw -> Q2).
+
+||S = (NS || WE).
+
+
+assert NO_DEADLOCK S.
+//with checking there is no dead lock we check that our solution is correct.

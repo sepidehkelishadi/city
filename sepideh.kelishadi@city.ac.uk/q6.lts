@@ -1,0 +1,48 @@
+//Actions of Interest
+set Actions = {arrive, depart, raiseFlag, lowerFlag, setIndicator, checkState}
+
+//Processes = ( CLANS, RAISEFLAG,SETINDICATOR, CHECKSTATE , RIVER )
+
+const True = 1
+const False = 0
+range B = False..True
+range T = 1..2   // 1 for Hatfields, 2 for MacCoys
+
+CLAN = (raiseFlag -> RAISEFLAG),
+RAISEFLAG = (setIndicator -> SETINDICATOR),
+SETINDICATOR = (checkState -> CHECKSTATE),
+CHECKSTATE = (lowerFlag -> CLAN 
+			  |arrive -> depart -> lowerFlag -> CLAN).
+
+||CLANS = (hatfields:CLAN || macCoys:CLAN).
+
+RIVER = RIVER[False][False][False][False][1], // Initially no clans at the river and no flag raised and it is hatfields turn on the indicator
+RIVER[ht:B][mt:B][flagH:B][flagM:B][turn:T] =      //ht when its Hatfields turn to be at the river and mt when MacCoys turn | flagH is Hatfields flag and flagM is macCoys flag
+	( hatfields.raiseFlag -> RIVER[ht][mt][True][flagM][turn]
+	| macCoys.raiseFlag -> RIVER[ht][mt][flagH][True][turn]
+	|hatfields.setIndicator -> RIVER[ht][mt][flagH][True][2]
+	|macCoys.setIndicator -> RIVER[ht][mt][flagH][True][1]
+    | when(flagM==True && turn == 2)
+        hatfields.lowerFlag -> RIVER[ht][mt][False][flagM][turn]
+	| when(flagH==True && turn == 1)
+        macCoys.lowerFlag -> RIVER[ht][mt][flagH][False][turn]
+	|when(flagM!=True || turn != 2)
+ 		hatfields.arrive -> hatfields.depart -> hatfields.lowerFlag -> RIVER[False][mt][False][flagM][turn]
+	|when(flagH!=True || turn != 1)
+ 		macCoys.arrive -> macCoys.depart -> macCoys.lowerFlag -> RIVER[ht][False][flagH][False][turn]
+ ).
+
+property SAFETY = (hatfields.arrive ->  hatfields.depart-> SAFETY
+				| macCoys.arrive -> macCoys.depart -> SAFETY).
+
+
+||NoConFlictRiver = (CLANS || RIVER || SAFETY ).
+
+
+//progress HATFIELD_WATER = {hatfields.arrive}
+//progress MACCOY_WATER = {macCoys.arrive}
+
+//When CLANs are not greedy there is no violation.
+//||NoConFlictRiver_NoneGreedyClans = (CLANS || RIVER || SAFETY )
+//							>> {hatfields.depart, macCoys.depart}.
+
